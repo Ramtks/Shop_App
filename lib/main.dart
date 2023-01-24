@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_shop/Screens/edit_product_screen.dart';
 import 'package:provider/provider.dart';
 import '../Screens/orders_screen.dart';
 import '../Screens/user_products_screen.dart';
@@ -9,7 +10,7 @@ import './Screens/product_detail_screen.dart';
 import './Screens/products_overview_screen.dart';
 import './Providers/products.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
 }
 
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         routes: {
+          EditProductScreen.routeName: (context) => const EditProductScreen(),
           UserProductsScreen.routeName: (context) => const UserProductsScreen(),
           OrdersScreen.routeName: (context) => const OrdersScreen(),
           CartScreen.routeName: (context) => const CartScreen(),

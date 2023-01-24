@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'product.dart';
+import 'package:http/http.dart'
+    as http; //this is called bundling the package all in prefix
+import 'dart:convert';
 
 class Products with ChangeNotifier {
   // ignore: prefer_final_fields
@@ -70,8 +73,73 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  void addProduct() {
-    // items.add(value);
+  Future<void> addProduct(Product product) async {
+    final url = Uri.parse(
+        'https://shopproject00-default-rtdb.europe-west1.firebasedatabase.app/products.json');
+    // final url = Uri.https('flutter-update.firebaseio.com', '/products.json'); //alternative syntax
+    try {
+      final response = await http.post(url,
+          body: json.encode({
+            //json is a format for transmiting data to and from web servers and stands for javascript object notation
+            'title': product.title,
+            'description': product.description,
+            'imageUrl': product.imageUrl,
+            'price': product.price,
+            'isfavorite': product.isFavorite
+          }));
+      final newProduct = Product(
+          id: json.decode(response.body)['name'],
+          title: product.title,
+          description: product.description,
+          imageUrl: product.imageUrl,
+          price: product.price);
+      _items.add(newProduct);
+
+      // _items.insert(0, newProduct);  //to add the product ib the start of the list
+      notifyListeners();
+    } finally {}
+  }
+
+  // Future<void> addProduct(Product product) {
+  //   final url = Uri.parse(
+  //       'https://shopproject00-default-rtdb.europe-west1.firebasedatabase.app/products.json');
+  //   // final url = Uri.https('flutter-update.firebaseio.com', '/products.json'); //alternative syntax
+  //   return http //difference between the async await way from this .then way that here the code after the .then (after .then() 'thiscode') will run but in the await it wont until the code in await finish
+  //       .post(url,
+  //           body: json.encode({
+  //             //json is a format for transmiting data to and from web servers and stands for javascript object notation
+  //             'title': product.title,
+  //             'description': product.description,
+  //             'imageUrl': product.imageUrl,
+  //             'price': product.price,
+  //             'isfavorite': product.isFavorite
+  //           }))
+  //       .then((response) {
+  //     final newProduct = Product(
+  //         id: json.decode(response.body)['name'],
+  //         title: product.title,
+  //         description: product.description,
+  //         imageUrl: product.imageUrl,
+  //         price: product.price);
+  //     _items.add(newProduct);
+
+  //     // _items.insert(0, newProduct);  //to add the product ib the start of the list
+  //     notifyListeners();
+  //   });
+  // }
+
+  void updateProduct(String id, Product newProduct) {
+    final prodIndex = _items.indexWhere((element) => element.id == id);
+    if (prodIndex >= 0) {
+      _items[prodIndex] = newProduct;
+      notifyListeners();
+    } else {
+      return;
+    }
+  }
+
+  void deleteProduct(String id) {
+    _items.removeWhere((element) => element.id == id);
     notifyListeners();
   }
 }
