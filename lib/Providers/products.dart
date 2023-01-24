@@ -13,7 +13,7 @@ class Products with ChangeNotifier {
       description: 'A red shirt - it is pretty red!',
       price: 29.99,
       imageUrl:
-          'https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg',
+          'https://i5.walmartimages.com/asr/b41bd905-f204-4666-8b42-140387381a0b.32043a79df9d2166b1ed7b576bda9e21.jpeg?odnHeight=580&odnWidth=580&odnBg=FFFFFF',
     ),
     Product(
       id: 'p2',
