@@ -48,21 +48,7 @@ class CartScreen extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
-                    TextButton(
-                        onPressed: () {
-                          if (cart.items.isNotEmpty) {
-                            Provider.of<Orders>(context, listen: false)
-                                .addOrder(cart.items.values.toList(),
-                                    cart.totalAmount);
-                            cart.clearCart();
-                          }
-                        },
-                        child: Text(
-                          'Order Now',
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                              fontSize: 16),
-                        ))
+                    OrderNow(cart: cart)
                   ],
                 ),
               ),
@@ -83,5 +69,49 @@ class CartScreen extends StatelessWidget {
             ))
           ],
         ));
+  }
+}
+
+class OrderNow extends StatefulWidget {
+  const OrderNow({
+    Key? key,
+    required this.cart,
+  }) : super(key: key);
+
+  final Cart cart;
+
+  @override
+  State<OrderNow> createState() => _OrderNowState();
+}
+
+class _OrderNowState extends State<OrderNow> {
+  var _isLoading = false;
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+        onPressed: (widget.cart.items.isEmpty || _isLoading)
+            ? null
+            : () async {
+                setState(() {
+                  _isLoading = true;
+                });
+                {
+                  await Provider.of<Orders>(context, listen: false).addOrder(
+                      widget.cart.items.values.toList(),
+                      widget.cart.totalAmount);
+                  widget.cart.clearCart();
+                  setState(() {
+                    _isLoading = false;
+                  });
+                }
+              },
+        child: _isLoading
+            ? const CircularProgressIndicator()
+            : Text(
+                'Order Now',
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                    fontSize: 16),
+              ));
   }
 }

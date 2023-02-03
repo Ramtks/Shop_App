@@ -23,6 +23,7 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentProduct = Provider.of<Product>(context, listen: false);
+    final scaffold = ScaffoldMessenger.of(context);
     //here we want the provided data for the title and picture once and dont want to rebuild the widget everytime the data change cuz for the image and title it wont
     final cart = Provider.of<Cart>(context, listen: false);
     return ClipRRect(
@@ -64,8 +65,13 @@ class ProductItem extends StatelessWidget {
                 //here we can add a child as an argument and it wont rebuild with the provided value changes but we can use it in builder function
                 //but here for the favorite we want it to build this part of the widget everytime cuz the button icon changes with each value and consumer listens by default
                 builder: (context, product, _) => IconButton(
-                    onPressed: () {
-                      product.toggleFavorite();
+                    onPressed: () async {
+                      try {
+                        await product.toggleFavorite();
+                      } catch (e) {
+                        scaffold.showSnackBar(const SnackBar(
+                            content: Text('Updating favorite status failed!')));
+                      }
                     },
                     icon: Icon(product.isFavorite
                         ? Icons.favorite

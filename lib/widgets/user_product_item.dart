@@ -15,6 +15,7 @@ class UserProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scaffold = ScaffoldMessenger.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: ListTile(
@@ -37,9 +38,17 @@ class UserProductItem extends StatelessWidget {
                     color: Theme.of(context).colorScheme.primary,
                   )),
               IconButton(
-                  onPressed: () {
-                    Provider.of<Products>(context, listen: false)
-                        .deleteProduct(id);
+                  onPressed: () async {
+                    try {
+                      await Provider.of<Products>(context,
+                              listen:
+                                  false) // here the await so we can see if it will throw an error then we will catch if we dont use await the catch will not run not catching anything cuz the error is not there yet
+                          .deleteProduct(id);
+                    } catch (error) {
+                      scaffold.showSnackBar(
+                          //here using a context will throw an error cuz future works like that and here flutter will be updating the widget tree and wont be sure if the context is the same as the context we it refers before
+                          const SnackBar(content: Text('Deleting failed!')));
+                    }
                   },
                   icon: Icon(
                     Icons.delete,

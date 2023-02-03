@@ -131,9 +131,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
     _form.currentState?.save();
     if (_editedProduct.id.isNotEmpty) {
-      Provider.of<Products>(context, listen: false)
+      await Provider.of<Products>(context, listen: false)
           .updateProduct(_editedProduct.id, _editedProduct);
-      Navigator.pop(context);
     } else {
       try {
         await Provider.of<Products>(context, listen: false)
@@ -151,11 +150,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
             ],
           ),
         );
-      } finally {
-        Navigator.pop(context);
       } //context is available here becuz we r in the state object
 
     }
+    Navigator.of(context).pop();
   }
 
 //  void _saveForm() async {

@@ -7,6 +7,11 @@ import '../Screens/edit_product_screen.dart';
 
 class UserProductsScreen extends StatelessWidget {
   const UserProductsScreen({super.key});
+  Future<void> _refreshProducts(BuildContext context) async {
+    //we need to pass the context here cuz in a stateless widget it is not availble everywhere not like state class
+    await Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+  }
+
   static const routeName = '/user-products-screen';
 
   @override
@@ -24,21 +29,29 @@ class UserProductsScreen extends StatelessWidget {
               icon: const Icon(Icons.add))
         ],
       ),
-      body: ListView.builder(
-        itemBuilder: (_, i) {
-          return Column(
-            children: [
-              UserProductItem(
-                  id: productsData.items[i].id,
-                  title: productsData.items[i].title,
-                  imageUrl: productsData.items[i].imageUrl),
-              const Divider(
-                thickness: 1,
-              )
-            ],
-          );
-        },
-        itemCount: productsData.items.length,
+      body: RefreshIndicator(
+        onRefresh: () => _refreshProducts(context)
+        // { //this works
+        //   return Provider.of<Products>(context, listen: false)
+        //       .fetchAndSetProducts();
+        // },
+        ,
+        child: ListView.builder(
+          itemBuilder: (_, i) {
+            return Column(
+              children: [
+                UserProductItem(
+                    id: productsData.items[i].id,
+                    title: productsData.items[i].title,
+                    imageUrl: productsData.items[i].imageUrl),
+                const Divider(
+                  thickness: 1,
+                )
+              ],
+            );
+          },
+          itemCount: productsData.items.length,
+        ),
       ),
     );
   }

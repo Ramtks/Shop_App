@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:my_shop/Screens/cart_screen.dart';
-import 'package:my_shop/Screens/orders_screen.dart';
 import 'package:my_shop/widgets/app_drawer.dart';
 import '../widgets/badge.dart';
 import '../widgets/products_grid.dart';
 import 'package:provider/provider.dart';
 import '../Providers/cart.dart';
+import '../Providers/products.dart';
 
 enum FilterOptions { favorite, all }
 
@@ -18,6 +18,35 @@ class ProductOverviewScreen extends StatefulWidget {
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   bool _showOnlyFavorites = false;
+  bool _isInIt = true;
+  bool _isLoading = false;
+  @override
+  void didChangeDependencies() {
+    //will run multiple times so thats why we need a bool helper
+    //this runs after the widget is fully initialized but before the build run
+    if (_isInIt) {
+      setState(() {
+        _isLoading = true;
+      });
+      Provider.of<Products>(context).fetchAndSetProducts().then((_) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    }
+    _isInIt = false;
+    super.didChangeDependencies();
+  }
+
+  // void initState() {//will run one time when the widget is created
+  //   //this provide of context only work in init state if we set the listen to false
+  //   // Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+  //   Future.delayed(Duration.zero).then((_) {
+  //     // this will run after the widget run cuz it is called as delayed even if the duration is zero
+  //     Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+  //   });
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +92,11 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
           ),
         ],
       ),
-      body: ProductsGrid(showOnlyFavorites: _showOnlyFavorites),
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : ProductsGrid(showOnlyFavorites: _showOnlyFavorites),
     );
   }
 }

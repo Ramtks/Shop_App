@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: ((context) => Orders())),
         ChangeNotifierProvider(
-          //flutter autoatically cleans widget from memory if u goes to a new page like a push and replcament and also here the data we are providing is also cleaned by the changenotifierprovider automatically
+          //flutter automatically cleans widget from memory if u goes to a new page like a push and replcament and also here the data we are providing is also cleaned by the changenotifierprovider automatically
           //here we are creating a new instance of an object to provide it and it is better to use the create way for more efficient
           create: (context) => Products(),
         ),
