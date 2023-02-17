@@ -16,25 +16,31 @@ class _OrderItemsbuilderState extends State<OrderItemsbuilder> {
   @override
   Widget build(BuildContext context) {
     final ordersitem = Provider.of<OrderItem>(context);
-    return Card(
-      margin: const EdgeInsets.all(10),
-      child: Column(
-        children: [
-          ListTile(
-            title: Text('${ordersitem.amount.toStringAsFixed(2)} \$'),
-            subtitle: Text(
-                DateFormat('dd/MM/yyyy hh:mm a').format(ordersitem.orderTime)),
-            trailing: IconButton(
-              icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
-              onPressed: () {
-                setState(() {
-                  _expanded = !_expanded;
-                });
-              },
+    return AnimatedContainer(
+      curve: Curves.easeIn,
+      height:
+          _expanded ? min(ordersitem.products.length * 20.0 + 145, 200) : 100,
+      duration: const Duration(milliseconds: 250),
+      child: Card(
+        margin: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            ListTile(
+              title: Text('${ordersitem.amount.toStringAsFixed(2)} \$'),
+              subtitle: Text(DateFormat('dd/MM/yyyy hh:mm a')
+                  .format(ordersitem.orderTime)),
+              trailing: IconButton(
+                icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
+                onPressed: () {
+                  setState(() {
+                    _expanded = !_expanded;
+                  });
+                },
+              ),
             ),
-          ),
-          if (_expanded)
-            Container(
+            AnimatedContainer(
+              curve: Curves.easeIn,
+              duration: const Duration(milliseconds: 250),
               decoration: const BoxDecoration(
                   gradient: LinearGradient(
                       begin: Alignment.topCenter,
@@ -43,7 +49,9 @@ class _OrderItemsbuilderState extends State<OrderItemsbuilder> {
                     Color.fromARGB(137, 255, 255, 255),
                     Colors.white
                   ])),
-              height: min(ordersitem.products.length * 20.0 + 50, 180),
+              height: _expanded
+                  ? min(ordersitem.products.length * 20.0 + 40, 180)
+                  : 0,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ListView(
@@ -71,7 +79,8 @@ class _OrderItemsbuilderState extends State<OrderItemsbuilder> {
                 ),
               ),
             )
-        ],
+          ],
+        ),
       ),
     );
   }

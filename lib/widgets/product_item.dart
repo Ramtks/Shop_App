@@ -3,6 +3,7 @@ import 'package:my_shop/Screens/product_detail_screen.dart';
 import 'package:provider/provider.dart';
 import '../Providers/cart.dart';
 import '../Providers/product.dart';
+import 'package:my_shop/Providers/auth.dart';
 
 class ProductItem extends StatelessWidget {
   // final Key myKey;
@@ -26,6 +27,7 @@ class ProductItem extends StatelessWidget {
     final scaffold = ScaffoldMessenger.of(context);
     //here we want the provided data for the title and picture once and dont want to rebuild the widget everytime the data change cuz for the image and title it wont
     final cart = Provider.of<Cart>(context, listen: false);
+    final authdata = Provider.of<Auth>(context, listen: false);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
@@ -67,7 +69,8 @@ class ProductItem extends StatelessWidget {
                 builder: (context, product, _) => IconButton(
                     onPressed: () async {
                       try {
-                        await product.toggleFavorite();
+                        await product.toggleFavorite(
+                            authdata.token, authdata.userId);
                       } catch (e) {
                         scaffold.showSnackBar(const SnackBar(
                             content: Text('Updating favorite status failed!')));
@@ -82,9 +85,13 @@ class ProductItem extends StatelessWidget {
             onTap: () => Navigator.of(context).pushNamed(
                 ProductDetailScreen.routeName,
                 arguments: currentProduct.id),
-            child: Image.network(
-              currentProduct.imageUrl,
-              fit: BoxFit.cover,
+            child: Hero(
+              tag: currentProduct.id,
+              child: FadeInImage(
+                placeholder: const AssetImage('assets/Images/loading.png'),
+                image: NetworkImage(currentProduct.imageUrl),
+                fit: BoxFit.cover,
+              ),
             ),
           )),
     );
